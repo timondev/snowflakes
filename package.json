@@ -1,6 +1,6 @@
 {
   "name": "@timondev/snowflakes",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "library for generating unique snowflake IDs",
   "keywords": [
     "snowflake",
