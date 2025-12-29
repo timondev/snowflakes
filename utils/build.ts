@@ -42,6 +42,3 @@ await Promise.all([
 
 // TypeScript build for declaration files.
 await Bun.spawn(["bun", "tsc", "-p", "tsconfig.build.json"]).exited;
-
-// Pack the module to verify integrity.
-await Bun.spawn(["bun", "pm", "pack"], { cwd: "./dist" }).exited;
