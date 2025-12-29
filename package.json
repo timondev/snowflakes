@@ -1,0 +1,17 @@
+{
+  "name": "@timondev/snowflakes",
+  "module": "src/snowflakes.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun run utils/build.ts",
+    "benchmark": "bun run utils/benchmark.ts"
+  },
+  "devDependencies": {
+    "@mitata/counters": "^0.0.8",
+    "@types/bun": "latest",
+    "mitata": "^1.0.34"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
