@@ -1,10 +1,71 @@
-# Snowflakes
+<a id="readme-top"></a>
 
-A distributed unique ID generator based on Twitter's Snowflake algorithm, written in TypeScript.
+
+
+<!-- PROJECT SHIELDS -->
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![License][license-shield]][license-url]
+
+
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <h3 align="center">@timondev/snowflakes</h3>
+  <p align="center">
+    A distributed unique ID generator based on Twitter's Snowflake algorithm, written in TypeScript.
+    <br />
+    <a href="https://github.com/timondev/snowflakes"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://www.npmjs.com/package/@timondev/snowflakes">View Package</a>
+    &middot;
+    <a href="https://github.com/timondev/snowflakes/issues/new">Report Bug / Request Feature</a>
+  </p>
+</div>
+
+
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
+
+
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+[![Snowflakes Benchmark Screen Shot][product-screenshot]](https://github.com/timondev/snowflakes)
 
 Generates unique, time-sortable 64-bit `bigint` IDs for distributed systems.
 
-## Features
+Written with bun, works in node.js but with worse performance (~40ns / iter).
+
+### Features
 
 - **Unique**: Generates 64-bit unique identifiers.
 - **Time-sortable**: IDs are ordered by creation time.
@@ -12,7 +73,12 @@ Generates unique, time-sortable 64-bit `bigint` IDs for distributed systems.
 - **High Performance**: Generates up to 16,384 IDs per millisecond per node.
 - **Zero Dependencies**: Lightweight and fast.
 
-## Installation
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+### Installation
 
 ```bash
 npm install snowflakes
@@ -24,6 +90,9 @@ pnpm add snowflakes
 bun add snowflakes
 ```
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- USAGE EXAMPLES -->
 ## Usage
 
 ### Basic Usage
@@ -52,9 +121,9 @@ Snowflake.configure({
 const id = Snowflake.generate();
 ```
 
-## API
+### API
 
-### `Snowflake.generate(): bigint`
+`Snowflake.generate(): bigint`
 
 Generates a unique 64-bit ID.
 
@@ -62,7 +131,7 @@ Generates a unique 64-bit ID.
 - **Throws**: `RangeError` if the increment limit (16,384) is exceeded for the current millisecond.
 - **Throws**: `Error` if the system clock moves backwards.
 
-### `Snowflake.configure(options)`
+`Snowflake.configure(options)`
 
 Configures the Snowflake generator.
 
@@ -72,7 +141,7 @@ Configures the Snowflake generator.
 - `workerId` (optional): Worker identifier (0-15). Defaults to `process.env.NODE_UNIQUE_ID` or `0`.
 - `processId` (optional): Process identifier (0-15). Defaults to `process.pid`.
 
-## ID Structure
+### ID Structure
 
 IDs consist of 3 components:
 
@@ -82,6 +151,52 @@ IDs consist of 3 components:
 | **Internal Identifiers** | 8 bits  | 4 bits for Worker ID + 4 bits for Process ID.                  |
 | **Increment**            | 14 bits | Sequence number for IDs generated within the same millisecond. |
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+<!-- CONTRIBUTING -->
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/amazing-feature`)
+3. Commit your Changes (`git commit -m 'feat: add some amazing feature'`)
+4. Push to the Branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Top contributors:
+
+<a href="https://github.com/timondev/snowflakes/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=timondev/snowflakes" alt="contrib.rocks image" />
+</a>
+
+
+
+<!-- LICENSE -->
 ## License
 
-Apache-2.0
+Distributed under the Apache-2.0 License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/timondev/snowflakes.svg?style=for-the-badge
+[contributors-url]: https://github.com/timondev/snowflakes/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/timondev/snowflakes.svg?style=for-the-badge
+[forks-url]: https://github.com/timondev/snowflakes/network/members
+[stars-shield]: https://img.shields.io/github/stars/timondev/snowflakes.svg?style=for-the-badge
+[stars-url]: https://github.com/timondev/snowflakes/stargazers
+[issues-shield]: https://img.shields.io/github/issues/timondev/snowflakes.svg?style=for-the-badge
+[issues-url]: https://github.com/timondev/snowflakes/issues
+[license-shield]: https://img.shields.io/github/license/timondev/snowflakes.svg?style=for-the-badge
+[license-url]: https://github.com/timondev/snowflakes/blob/release/main/LICENSE.txt
+[product-screenshot]: .github/resources/snowflake-benchmark.png
+[Bun.js]: https://img.shields.io/badge/bun-000000?style=for-the-badge&logo=bun&logoColor=white
+[Bun-url]: https://bun.com/
