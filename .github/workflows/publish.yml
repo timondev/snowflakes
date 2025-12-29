@@ -11,6 +11,7 @@ permissions:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    environment: npm package
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
