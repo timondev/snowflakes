@@ -84,4 +84,4 @@ IDs consist of 3 components:
 
 ## License
 
-MIT
+Apache-2.0
