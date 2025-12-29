@@ -7,15 +7,24 @@ const defaultBuildConfig: BuildConfig = {
     minify: true,
 }
 
+// Clean dist folder.
 await Bun.spawn(["rm", "-rf", "./dist"]).exited;
 
+// Write package.json to dist folder.
 Bun.write("./dist/package.json", JSON.stringify({
     ...packageJson,
+    "devDependencies": undefined,
+    "peerDependencies": undefined,
+    "scripts": undefined,
     "module": "snowflake.js",
     "main": "snowflake.cjs",
     "sideEffects": false,
 }, null, 0));
 
+// Copy LICENSE to dist folder.
+await Bun.spawn(["cp", "./LICENSE", "./dist/LICENSE"]).exited;
+
+// Build ESM and CJS versions.
 await Promise.all([
     Bun.build({
         ...defaultBuildConfig,
@@ -29,5 +38,8 @@ await Promise.all([
     })
 ]);
 
+// TypeScript build for declaration files.
 await Bun.spawn(["bun", "tsc", "-p", "tsconfig.build.json"]).exited;
+
+// Pack the module to verify integrity.
 await Bun.spawn(["bun", "pm", "pack"], { cwd: "./dist" }).exited;
