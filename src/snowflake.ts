@@ -34,8 +34,8 @@ export class Snowflake {
     // Generator state.
     private static lastTime: number = 0;
     private static increment: number = 0;
-    private static workerId: number = Number(process.env.NODE_UNIQUE_ID ?? 0) % Snowflake.LIMITER;
-    private static processId: number = process.pid % Number(Snowflake.LIMITER);
+    private static workerId: number = Math.abs(Number(process.env.NODE_UNIQUE_ID ?? 0) || 0) % Snowflake.LIMITER;
+    private static processId: number = Math.abs(process.pid) % Number(Snowflake.LIMITER);
 
     // Precomputed identifiers.
     private static identifiers: bigint =
@@ -65,8 +65,8 @@ export class Snowflake {
         const { epoch, workerId, processId } = options;
 
         // Update values if provided.
-        if (workerId !== undefined) Snowflake.workerId = workerId % Snowflake.LIMITER;
-        if (processId !== undefined) Snowflake.processId = processId % Snowflake.LIMITER;
+        if (workerId !== undefined) Snowflake.workerId = Math.abs(workerId) % Snowflake.LIMITER;
+        if (processId !== undefined) Snowflake.processId = Math.abs(processId) % Snowflake.LIMITER;
 
         // Reset `lastTime` on epoch change.
         if (epoch !== undefined) {
@@ -116,12 +116,13 @@ export class Snowflake {
             throw new Error('Clock moved backwards. Refusing to generate id');
         }
 
-        // Combine components.
-        let snowflake = Snowflake.shiftedTimeWithIdentifiers | Snowflake.INCREMENT_CACHE[Snowflake.increment]!;
-
-        if (++Snowflake.increment > Snowflake.INCREMENT_LIMITER) {
+        if (Snowflake.increment > Snowflake.INCREMENT_LIMITER) {
             throw new RangeError('Snowflake is out of range');
         }
+
+        // Combine components.
+        let snowflake = Snowflake.shiftedTimeWithIdentifiers | Snowflake.INCREMENT_CACHE[Snowflake.increment]!;
+        Snowflake.increment++;
 
         return snowflake;
     }

@@ -64,12 +64,12 @@ describe('Snowflake', () => {
         const ids: Set<bigint> = new Set();
 
         // Generate max IDs per ms.
-        for (let index = 0; index < 0x3FFF; index++) {
+        for (let index = 0; index <= 0x3FFF; index++) {
             ids.add(Snowflake.generate());
         }
 
         // Expect unique IDs.
-        expect(ids.size).toBe(0x3FFF);
+        expect(ids.size).toBe(0x3FFF + 1);
 
         // Expect `RangeError` on overflow.
         expect(Snowflake.generate).toThrowError(RangeError);
@@ -132,6 +132,19 @@ describe('Snowflake', () => {
             // Expect wrap around 16.
             expect(workerId).toBe(1);
             expect(processId).toBe(3);
+        });
+
+        test('handle negative workerId and processId', () => {
+            Snowflake.configure({ workerId: -1, processId: -5 });
+            const id = Snowflake.generate();
+            const workerId = Number((id & 0x3C0000n) >> 18n);
+            const processId = Number((id & 0x3C000n) >> 14n);
+
+            // Expect absolute value modulo 16.
+            // |-1| % 16 = 1
+            // |-5| % 16 = 5
+            expect(workerId).toBe(1);
+            expect(processId).toBe(5);
         });
     });
 });
