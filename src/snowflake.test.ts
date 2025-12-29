@@ -64,12 +64,12 @@ describe('Snowflake', () => {
         const ids: Set<bigint> = new Set();
 
         // Generate max IDs per ms.
-        for (let index = 0; index <= 0x3FFF; index++) {
+        for (let index = 0; index < 0x4000; index++) {
             ids.add(Snowflake.generate());
         }
 
         // Expect unique IDs.
-        expect(ids.size).toBe(0x3FFF + 1);
+        expect(ids.size).toBe(0x4000);
 
         // Expect `RangeError` on overflow.
         expect(Snowflake.generate).toThrowError(RangeError);
@@ -93,6 +93,7 @@ describe('Snowflake', () => {
             mocked_epoch = 1420042000000;
             Snowflake.configure({ epoch: mocked_epoch });
 
+            // Expect updated timestamp match.
             expect(Snowflake.generate() >> 22n).toBe(42n);
         });
 
@@ -145,6 +146,63 @@ describe('Snowflake', () => {
             // |-5| % 16 = 5
             expect(workerId).toBe(1);
             expect(processId).toBe(5);
+        });
+    });
+
+    describe('configuration', () => {
+        test('partial updates preserve other values', () => {
+            Snowflake.configure({ workerId: 5 });
+            let id = Snowflake.generate();
+            let workerId = Number((id & 0x3C0000n) >> 18n);
+            let processId = Number((id & 0x3C000n) >> 14n);
+
+            // Expect updated workerId and preserved processId.
+            expect(workerId).toBe(5);
+            expect(processId).toBe(8);
+
+            Snowflake.configure({ processId: 10 });
+            id = Snowflake.generate();
+            workerId = Number((id & 0x3C0000n) >> 18n);
+            processId = Number((id & 0x3C000n) >> 14n);
+
+            // Expect preserved workerId and updated processId.
+            expect(workerId).toBe(5);
+            expect(processId).toBe(10);
+        });
+
+        test('with undefined values preserves existing', () => {
+            Snowflake.configure({ workerId: 5, processId: 10 });
+
+            // Pass undefined explicitly
+            Snowflake.configure({ workerId: undefined, processId: undefined });
+
+            let id = Snowflake.generate();
+            let workerId = Number((id & 0x3C0000n) >> 18n);
+            let processId = Number((id & 0x3C000n) >> 14n);
+
+            // Expect preserved values.
+            expect(workerId).toBe(5);
+            expect(processId).toBe(10);
+        });
+
+        test('with NaN defaults to 0', () => {
+            Snowflake.configure({ workerId: NaN, processId: NaN });
+
+            let id = Snowflake.generate();
+            let workerId = Number((id & 0x3C0000n) >> 18n);
+            let processId = Number((id & 0x3C000n) >> 14n);
+
+            // Expect defaults to 0.
+            expect(workerId).toBe(0);
+            expect(processId).toBe(0);
+        });
+
+        test('future epoch throws Clock moved backwards error', () => {
+            const futureEpoch = mocked_epoch + 2000;
+            Snowflake.configure({ epoch: futureEpoch });
+
+            // Expect error when generating ID.
+            expect(() => Snowflake.generate()).toThrow('Clock moved backwards. Refusing to generate id');
         });
     });
 });
