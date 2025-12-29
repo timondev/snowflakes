@@ -18,6 +18,7 @@ Bun.write("./dist/package.json", JSON.stringify({
     "scripts": undefined,
     "module": "snowflake.js",
     "main": "snowflake.cjs",
+    "types": "snowflake.d.ts",
     "sideEffects": false,
 }, null, 0));
 
