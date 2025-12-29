@@ -20,34 +20,38 @@ export class Snowflake {
     // Private constructor to prevent direct instantiation.
     private constructor() { }
 
-    // Constant for representing the value zero in bigint format.
-    private static readonly ZERO_BIGINT = BigInt(0);
-
     // Several constants for shifting between the components.
-    private static readonly WORKER_SHIFT = BigInt(18);
-    private static readonly PROCESS_SHIFT = BigInt(14);
-    private static readonly TIME_SHIFT = BigInt(22);
+    private static readonly WORKER_SHIFT = 18;
+    private static readonly PROCESS_SHIFT = 14;
+    private static readonly TIME_SHIFT = 22n;
 
     // Limiters for process, worker aswell as increment component.
-    private static readonly LIMITER = BigInt(2 ** 4);
-    private static readonly INCREMENT_LIMITER = BigInt(0x3FFF);
+    private static readonly LIMITER = 16;
+    private static readonly INCREMENT_LIMITER = 0x3FFF;
 
     /** The custom `epoch` time used as a base for all generated snowflakes. */
     private static epoch: number = 1420070400000;
 
     // Components for generating snowflakes.
     private static lastTime: number = 0;
-    private static increment = Snowflake.ZERO_BIGINT;
-    private static workerId = BigInt(process.env.NODE_UNIQUE_ID ?? 0) % Snowflake.LIMITER;
-    private static processId = BigInt(process.pid) % Snowflake.LIMITER;
+    private static increment: number = 0;
+    private static workerId: number = Number(process.env.NODE_UNIQUE_ID ?? 0) % Snowflake.LIMITER;
+    private static processId: number = process.pid % Number(Snowflake.LIMITER);
 
     // Precompute identifiers
-    private static identifiers =
-        (Snowflake.workerId << Snowflake.WORKER_SHIFT)
-        + (Snowflake.processId << Snowflake.PROCESS_SHIFT);
+    private static identifiers: bigint =
+        BigInt((Snowflake.workerId << Snowflake.WORKER_SHIFT)
+            + (Snowflake.processId << Snowflake.PROCESS_SHIFT));
 
-    // Cached timestamp
-    private static time: bigint = BigInt(Snowflake.lastTime);
+    // Cache BigInts for all possible increments to avoid allocation during generation
+    private static readonly INCREMENT_CACHE: bigint[] = Array.from(
+        { length: Snowflake.INCREMENT_LIMITER + 1 },
+        (_, i) => BigInt(i)
+    );
+
+    // Cached timestamp combined with identifiers
+    private static shiftedTimeWithIdentifiers: bigint =
+        (BigInt(Snowflake.lastTime) << Snowflake.TIME_SHIFT) | Snowflake.identifiers;
 
     /**
      * Configures the static `workerId` and `processId` for snowflake generation
@@ -59,24 +63,31 @@ export class Snowflake {
      * @param options.workerId - The new worker identifier.
      * @param options.processId - The new process identifier.
      */
-    public static configure(options: { epoch?: number, workerId?: bigint, processId?: bigint }): void {
+    public static configure(options: { epoch?: number, workerId?: number, processId?: number }): void {
         const { epoch, workerId, processId } = options;
 
         // replace the changed values if needed.
-        if (workerId) Snowflake.workerId = workerId % Snowflake.LIMITER;
-        if (processId) Snowflake.processId = processId % Snowflake.LIMITER;
+        if (workerId !== undefined) Snowflake.workerId = workerId % Snowflake.LIMITER;
+        if (processId !== undefined) Snowflake.processId = processId % Snowflake.LIMITER;
 
         // when epoch changes, reset `lastTime` to zero.
-        if (epoch) {
+        if (epoch !== undefined) {
             Snowflake.epoch = epoch;
             Snowflake.lastTime = 0;
         }
 
         // recompute the identifiers if values have changed.
-        if (workerId || processId) {
-            Snowflake.identifiers =
+        if (workerId !== undefined || processId !== undefined) {
+            Snowflake.identifiers = BigInt(
                 (Snowflake.workerId << Snowflake.WORKER_SHIFT)
-                + (Snowflake.processId << Snowflake.PROCESS_SHIFT);
+                + (Snowflake.processId << Snowflake.PROCESS_SHIFT)
+            );
+        }
+
+        // recompute the combined timestamp and identifiers
+        if (epoch !== undefined || workerId !== undefined || processId !== undefined) {
+            Snowflake.shiftedTimeWithIdentifiers =
+                (BigInt(Snowflake.lastTime) << Snowflake.TIME_SHIFT) | Snowflake.identifiers;
         }
     }
 
@@ -97,20 +108,18 @@ export class Snowflake {
      * @throws {RangeError} if increment limit is exceeded for the current millisecond.
      */
     public static generate(): bigint {
-        const time = Math.floor(performance.now() + performance.timeOrigin - Snowflake.epoch);
+        const time = Date.now() - Snowflake.epoch;
 
         if (time > Snowflake.lastTime) {
-            Snowflake.increment = Snowflake.ZERO_BIGINT;
+            Snowflake.increment = 0;
             Snowflake.lastTime = time;
-            Snowflake.time = BigInt(time);
+            Snowflake.shiftedTimeWithIdentifiers = (BigInt(time) << Snowflake.TIME_SHIFT) | Snowflake.identifiers;
         } else if (time < Snowflake.lastTime) {
             throw new Error('Clock moved backwards. Refusing to generate id');
         }
 
         // Construct snowflake by combining the elements
-        let snowflake = (Snowflake.time << Snowflake.TIME_SHIFT)
-            | Snowflake.identifiers
-            | Snowflake.increment;
+        let snowflake = Snowflake.shiftedTimeWithIdentifiers | Snowflake.INCREMENT_CACHE[Snowflake.increment]!;
 
         if (++Snowflake.increment > Snowflake.INCREMENT_LIMITER) {
             throw new RangeError('Snowflake is out of range');
@@ -124,6 +133,6 @@ export class Snowflake {
      * This method is intended primarily for testing purposes.
      */
     public static resetIncrement() {
-        Snowflake.increment = Snowflake.ZERO_BIGINT;
+        Snowflake.increment = 0;
     }
 }

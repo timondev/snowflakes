@@ -8,12 +8,11 @@ beforeEach(() => {
     // reset mocked time.
     mocked_timestamp = 42.0;
 
-    // mock performance's `now()` and `timeOrigin` to ensure tests stay predictable.
-    spyOn(performance, 'now').mockImplementation(() => mocked_timestamp); // @ts-ignore
-    spyOn(performance, 'timeOrigin', 'get').mockImplementation(() => mocked_epoch);
+    // mock Date.now() to ensure tests stay predictable.
+    spyOn(Date, 'now').mockImplementation(() => Math.floor(mocked_epoch + mocked_timestamp));
 
     // explicitly configure the epoch and reset the increment for a clean state.
-    Snowflake.configure({ epoch: mocked_epoch, workerId: 4n, processId: 8n });
+    Snowflake.configure({ epoch: mocked_epoch, workerId: 4, processId: 8 });
     Snowflake.resetIncrement();
 });
 
@@ -112,28 +111,27 @@ describe('Snowflake', () => {
         });
 
         test('handle worker and process identifiers if supplied', () => {
-            const mocked_workerid = 3n;
-            const mocked_processid = 6n;
+            const mocked_workerid = 3;
+            const mocked_processid = 6;
 
             Snowflake.configure({ workerId: mocked_workerid, processId: mocked_processid });
 
             // generate the expected identifiers from mock values.
-            const expected_identifiers = (mocked_workerid << 4n) | mocked_processid;
+            const expected_identifiers = (mocked_workerid << 4) | mocked_processid;
 
             // expects cheese.
-            expect((Snowflake.generate() & 0x3ff000n) >> 14n).toBe(expected_identifiers);
+            expect(Number((Snowflake.generate() & 0x3ff000n) >> 14n)).toBe(expected_identifiers);
         });
 
         test('wrap workerId and processId if they exceed the 4-bit limit', () => {
-            Snowflake.configure({ workerId: 17n, processId: 19n });
-
+            Snowflake.configure({ workerId: 17, processId: 19 });
             const id = Snowflake.generate();
-            const workerId = (id & 0x3C0000n) >> 18n;
-            const processId = (id & 0x3C000n) >> 14n;
+            const workerId = Number((id & 0x3C0000n) >> 18n);
+            const processId = Number((id & 0x3C000n) >> 14n);
 
             // expects workerId and processId to wrap around 16 (2^4).
-            expect(workerId).toBe(1n);
-            expect(processId).toBe(3n);
+            expect(workerId).toBe(1);
+            expect(processId).toBe(3);
         });
     });
 });
