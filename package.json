@@ -2,6 +2,23 @@
   "name": "@timondev/snowflakes",
   "version": "0.0.1",
   "description": "library for generating unique snowflake IDs",
+  "keywords": [
+    "snowflake",
+    "id",
+    "generator",
+    "unique",
+    "64-bit"
+  ],
+  "homepage": "https://github.com/timondev/snowflakes#readme",
+  "bugs": {
+    "url": "https://github.com/timondev/snowflakes/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timondev/snowflakes.git"
+  },
+  "license": "Apache-2.0",
+  "author": "timondev",
   "type": "module",
   "module": "src/snowflake.ts",
   "sideEffects": false,
