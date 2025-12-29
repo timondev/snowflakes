@@ -10,7 +10,9 @@ jobs:
     environment: npm package
     permissions:
       id-token: write # Required for OIDC
-      contents: read
+      contents: read # Required for actions/checkout
+      attestations: write # Required for attestation
+      packages: write # Required for publishing to github packages
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -35,3 +37,6 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --provenance --access public ./dist
+
+      - name: Publish to GitHub Packages
+        run: npm publish --provenance --access public --registry https://npm.pkg.github.com ./dist
