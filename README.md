@@ -2,14 +2,14 @@
 
 A distributed unique ID generator based on Twitter's Snowflake algorithm, written in TypeScript.
 
-This package generates 64-bit `bigint` IDs that are guaranteed to be unique within a distributed system and ensures that IDs are roughly time-sortable.
+Generates unique, time-sortable 64-bit `bigint` IDs for distributed systems.
 
 ## Features
 
 - **Unique**: Generates 64-bit unique identifiers.
 - **Time-sortable**: IDs are ordered by creation time.
 - **Distributed**: Supports multiple workers and processes to ensure uniqueness across a cluster.
-- **High Performance**: capable of generating up to 16,384 unique IDs per millisecond per node.
+- **High Performance**: Generates up to 16,384 IDs per millisecond per node.
 - **Zero Dependencies**: Lightweight and fast.
 
 ## Installation
@@ -38,7 +38,7 @@ console.log(id); // e.g., 159958744000000000n
 
 ### Configuration
 
-You can configure the generator with a custom epoch, worker ID, and process ID. This is useful if you are running multiple instances of the generator in a distributed environment.
+Configure custom epoch, worker ID, and process ID for distributed environments.
 
 ```typescript
 import { Snowflake } from 'snowflakes';
@@ -56,7 +56,7 @@ const id = Snowflake.generate();
 
 ### `Snowflake.generate(): bigint`
 
-Generates a unique 64-bit Snowflake ID.
+Generates a unique 64-bit ID.
 
 - **Returns**: A `bigint` representing the unique ID.
 - **Throws**: `RangeError` if the increment limit (16,384) is exceeded for the current millisecond.
@@ -68,13 +68,13 @@ Configures the Snowflake generator.
 
 **Options:**
 
-- `epoch` (optional): A custom epoch timestamp (in milliseconds). Defaults to `1420070400000` (Twitter Snowflake epoch).
-- `workerId` (optional): A unique identifier for the worker (0-15). Defaults to `process.env.NODE_UNIQUE_ID` or `0`.
-- `processId` (optional): A unique identifier for the process (0-15). Defaults to `process.pid`.
+- `epoch` (optional): Custom epoch timestamp (in milliseconds). Defaults to `1420070400000` (Twitter Snowflake epoch).
+- `workerId` (optional): Worker identifier (0-15). Defaults to `process.env.NODE_UNIQUE_ID` or `0`.
+- `processId` (optional): Process identifier (0-15). Defaults to `process.pid`.
 
 ## ID Structure
 
-Snowflakes are 64-bit integers consisting of 3 components:
+IDs consist of 3 components:
 
 | Component                | Bits    | Description                                                    |
 | ------------------------ | ------- | -------------------------------------------------------------- |

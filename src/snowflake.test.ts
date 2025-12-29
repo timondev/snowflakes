@@ -5,19 +5,19 @@ let mocked_timestamp: number = 42.0;
 let mocked_epoch: number = 1420070400000;
 
 beforeEach(() => {
-    // reset mocked time.
+    // Reset mocked time.
     mocked_timestamp = 42.0;
 
-    // mock Date.now() to ensure tests stay predictable.
+    // Mock `Date.now()` for predictability.
     spyOn(Date, 'now').mockImplementation(() => Math.floor(mocked_epoch + mocked_timestamp));
 
-    // explicitly configure the epoch and reset the increment for a clean state.
+    // Configure epoch and reset increment.
     Snowflake.configure({ epoch: mocked_epoch, workerId: 4, processId: 8 });
     Snowflake.resetIncrement();
 });
 
 afterEach(() => {
-    // restore the original performance.now() functionality.
+    // Restore original functionality.
     mock.restore();
 });
 
@@ -29,65 +29,65 @@ describe('Snowflake', () => {
     test('generate a unique bigint id', () => {
         const id = Snowflake.generate();
 
-        // expects snowflake to be of type bigint
+        // Expect `bigint` type.
         expect(typeof id).toBe('bigint');
 
-        // expects snowflake not to be null.
+        // Expect not null.
         expect(id).not.toBeNull();
     });
 
     test('generate sequential ids which differ in increment', () => {
         const ids = [Snowflake.generate(), Snowflake.generate()];
 
-        // expects second snowflake to have an increment of one.
+        // Expect increment of 1.
         expect(ids[1]! & 0x3FFFn).toBe(1n);
 
-        // reset the increment and create another id.
+        // Reset increment, generate ID.
         Snowflake.resetIncrement();
         const id = Snowflake.generate();
 
-        // expects snowflake after reset to have an increment of zero.
+        // Expect increment of 0.
         expect(id & 0x3FFFn).toBe(0n);
     });
 
     test('generate sequential ids with similar timestamp', () => {
         const ids = [Snowflake.generate(), Snowflake.generate()];
 
-        // calculate the difference between the two timestamps for the generated ids.
+        // Calculate timestamp difference.
         let timestamp_difference = Number((ids[1]! >> 22n) - (ids[0]! >> 22n));
 
-        // expects ids to have the same (close to) timestamp.
+        // Expect similar timestamps.
         expect(timestamp_difference).toEqual(0);
     });
 
     test('not generate overlapping ids', () => {
         const ids: Set<bigint> = new Set();
 
-        // generate the maximum amount of ids per millisecond.
+        // Generate max IDs per ms.
         for (let index = 0; index < 0x3FFF; index++) {
             ids.add(Snowflake.generate());
         }
 
-        // expects that each generated snowflake is unique.
+        // Expect unique IDs.
         expect(ids.size).toBe(0x3FFF);
 
-        // expects that no more snowflakes can be generated.
+        // Expect `RangeError` on overflow.
         expect(Snowflake.generate).toThrowError(RangeError);
     });
 
     test('throw an error if the clock moves backward', () => {
-        Snowflake.generate(); // generate a value for lastTime.
+        Snowflake.generate(); // Initialize `lastTime`.
 
-        // move the mocked clock backward.
+        // Move clock backward.
         mocked_timestamp -= 10;
 
-        // expects this to fail to prevent duplicate Ids.
+        // Expect error.
         expect(() => Snowflake.generate()).toThrow('Clock moved backwards. Refusing to generate id');
     });
 
     describe('components', () => {
         test('handle predictable timestamps if supplied', () => {
-            // expects ids timestamp to match the predefined performance.now().
+            // Expect timestamp match.
             expect(Snowflake.generate() >> 22n).toBe(42n);
 
             mocked_epoch = 1420042000000;
@@ -99,13 +99,13 @@ describe('Snowflake', () => {
         test('handle and reset increments when time changes', () => {
             const ids = [Snowflake.generate()];
 
-            // increase the mocked time.
+            // Increase mocked time.
             mocked_timestamp += 1;
 
-            // generate another id with the increased timestamp.
+            // Generate ID with new timestamp.
             ids.push(Snowflake.generate());
 
-            // expects both ids with an increment of zero.
+            // Expect both increments to be 0.
             expect(ids[0]! & 0x3FFFn).toBe(0n);
             expect(ids[1]! & 0x3FFFn).toBe(0n);
         });
@@ -116,10 +116,10 @@ describe('Snowflake', () => {
 
             Snowflake.configure({ workerId: mocked_workerid, processId: mocked_processid });
 
-            // generate the expected identifiers from mock values.
+            // Calculate expected identifiers.
             const expected_identifiers = (mocked_workerid << 4) | mocked_processid;
 
-            // expects cheese.
+            // Expect match.
             expect(Number((Snowflake.generate() & 0x3ff000n) >> 14n)).toBe(expected_identifiers);
         });
 
@@ -129,7 +129,7 @@ describe('Snowflake', () => {
             const workerId = Number((id & 0x3C0000n) >> 18n);
             const processId = Number((id & 0x3C000n) >> 14n);
 
-            // expects workerId and processId to wrap around 16 (2^4).
+            // Expect wrap around 16.
             expect(workerId).toBe(1);
             expect(processId).toBe(3);
         });
