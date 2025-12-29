@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": false,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outDir": "./dist",
+        "allowImportingTsExtensions": false,
+        "moduleResolution": "node"
+    },
+    "include": [
+        "src/snowflake.ts"
+    ]
+}

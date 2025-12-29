@@ -1,7 +1,10 @@
 {
   "name": "@timondev/snowflakes",
-  "module": "src/snowflakes.ts",
+  "version": "0.0.1",
+  "description": "library for generating unique snowflake IDs",
   "type": "module",
+  "module": "src/snowflake.ts",
+  "sideEffects": false,
   "scripts": {
     "build": "bun run utils/build.ts",
     "benchmark": "bun run utils/benchmark.ts"
