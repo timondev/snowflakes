@@ -22,7 +22,8 @@ Bun.write("./dist/package.json", JSON.stringify({
     "sideEffects": false,
 }, null, 0));
 
-// Copy LICENSE to dist folder.
+// Copy README.md and LICENSE to dist folder.
+await Bun.spawn(["cp", "./README.md", "./dist/README.md"]).exited;
 await Bun.spawn(["cp", "./LICENSE", "./dist/LICENSE"]).exited;
 
 // Build ESM and CJS versions.
