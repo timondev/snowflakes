@@ -181,7 +181,21 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the Apache-2.0 License. See `LICENSE.md` for more information.
+Copyright 2025 timondev
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -196,7 +210,7 @@ Distributed under the Apache-2.0 License. See `LICENSE.md` for more information.
 [issues-shield]: https://img.shields.io/github/issues/timondev/snowflakes.svg?style=for-the-badge
 [issues-url]: https://github.com/timondev/snowflakes/issues
 [license-shield]: https://img.shields.io/github/license/timondev/snowflakes.svg?style=for-the-badge
-[license-url]: https://github.com/timondev/snowflakes/blob/release/main/LICENSE.txt
+[license-url]: https://github.com/timondev/snowflakes/blob/release/main/LICENSE
 [product-screenshot]: .github/resources/snowflake-benchmark.png
 [Bun.js]: https://img.shields.io/badge/bun-000000?style=for-the-badge&logo=bun&logoColor=white
 [Bun-url]: https://bun.com/
