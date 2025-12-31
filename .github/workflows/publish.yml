@@ -30,8 +30,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: |
-            dist
+          path: dist
 
   publish-npm:
     needs: build
@@ -47,6 +46,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: dist
+          path: dist
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -71,6 +71,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: dist
+          path: dist
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
