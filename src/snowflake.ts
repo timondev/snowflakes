@@ -6,7 +6,7 @@
  * 
  * @example
  * ```typescript
- * import { Snowflake } from '@timondev/snowflake';
+ * import { Snowflake } from '@timondev/snowflakes';
  * const id = Snowflake.generate(); // 159958744000000000n
  * 
  * // Configure worker and process ids.
