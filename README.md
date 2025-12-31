@@ -81,13 +81,13 @@ Written with bun, works in node.js but with worse performance (~40ns / iter).
 ### Installation
 
 ```bash
-npm install snowflakes
+npm install @timondev/snowflakes
 # or
-yarn add snowflakes
+yarn add @timondev/snowflakes
 # or
-pnpm add snowflakes
+pnpm add @timondev/snowflakes
 # or
-bun add snowflakes
+bun add @timondev/snowflakes
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -98,7 +98,7 @@ bun add snowflakes
 ### Basic Usage
 
 ```typescript
-import { Snowflake } from 'snowflakes';
+import { Snowflake } from '@timondev/snowflakes';
 
 // Generate a unique ID
 const id = Snowflake.generate();
@@ -110,7 +110,7 @@ console.log(id); // e.g., 159958744000000000n
 Configure custom epoch, worker ID, and process ID for distributed environments.
 
 ```typescript
-import { Snowflake } from 'snowflakes';
+import { Snowflake } from '@timondev/snowflakes';
 
 Snowflake.configure({
   epoch: 1609459200000, // Custom epoch (e.g., Jan 1, 2021)
